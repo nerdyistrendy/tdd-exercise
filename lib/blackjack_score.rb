@@ -1,81 +1,35 @@
-require 'minitest'
-require 'minitest/spec'
-require 'minitest/autorun'
-require 'minitest/reporters'
-require 'minitest/pride'
+# blackjack_score.rb
 
-require_relative '../lib/blackjack_score'
+VALID_CARDS = [2, 3, 4, 5, 6, 7, 8, 9, 10, 'Jack', 'Queen', 'King', 'Ace']
 
-Minitest::Reporters.use! Minitest::Reporters::SpecReporter.new
+def blackjack_score(hand)
+  score = 0
+  extra_ten = 0
+  hand.each do |card|
+    if !VALID_CARDS.include?(card)
+      raise ArgumentError.new("Invalid card value.")
+    elsif hand.length > 5 || hand.length < 2
+      raise ArgumentError.new("The hand must contain 2 to 5 cards inclusive.")
+    end
 
-describe 'Blackjack Score' do
-  it 'can calculate the score for a pair of number cards' do
+    if card == 'Jack' || card == 'Queen'|| card == 'King'
+      card = 10
+    end
 
-    # Arrange
-    hand = [3, 4]
+    if card == 'Ace'
+      card = 1
+      extra_ten += 10
+    end
 
-    # Act
-    score = blackjack_score(hand)
-
-    # Assert <-  You do this part!
-    expect((score)).must_equal 7
+    score = score + card
   end
 
-  it 'facecards have values calculated correctly' do
-
-    # Arrange
-    hand = [3, 4, "Jack"]
-
-    # Act
-    score = blackjack_score(hand)
-
-    # Assert
-    expect((score)).must_equal 17
+  if score > 21
+    raise ArgumentError.new("The hand is a bust.")
+  elsif score < 12 && extra_ten > 0
+    score = score + 10
   end
-
-  it 'calculates aces as 11 where it does not go over 21' do
-
-    # Arrange
-    hand = [5, 4, "Ace"]
-
-    # Act
-    score = blackjack_score(hand)
-
-    # Assert
-    expect((score)).must_equal 20
-  end
-
-  it 'calculates aces as 1, if an 11 would cause the score to go over 21' do
-
-    # Arrange
-    hand = [2, "Jack", "Ace"]
-
-    # Act
-    score = blackjack_score(hand)
-
-    # Assert
-    expect((score)).must_equal 13
-  end
-
-  it 'raises an ArgumentError for invalid cards' do
-
-    expect{
-      blackjack_score("KING", 5)
-    }.must_raise ArgumentError
-
-    expect{
-      blackjack_score(1, 2 )
-    }.must_raise ArgumentError
-  end
-
-  it 'raises an ArgumentError for scores over 21' do
-
-    expect{
-      blackjack_score(5, "Jack", "Queen")
-    }.must_raise ArgumentError
-
-     expect{
-       blackjack_score(5, "King", 9)
-     }.must_raise ArgumentError
-  end
+  return score
 end
+
+puts blackjack_score(["Ace", "Ace", "Queen"])

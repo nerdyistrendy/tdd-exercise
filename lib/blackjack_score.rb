@@ -14,9 +14,7 @@ def blackjack_score(hand)
 
     if card == 'Jack' || card == 'Queen'|| card == 'King'
       card = 10
-    end
-
-    if card == 'Ace'
+    elsif card == 'Ace'
       card = 1
       extra_ten += 10
     end
@@ -32,4 +30,3 @@ def blackjack_score(hand)
   return score
 end
 
-puts blackjack_score(["Ace", "Ace", "Queen"])
